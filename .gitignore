@@ -1,0 +1,44 @@
+# ===================================================================
+# General
+# ===================================================================
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# IDE-specific
+.idea/
+.vscode/
+*.suo
+*.user
+
+# ===================================================================
+# .NET
+# ===================================================================
+# C# build outputs
+[Bb]in/
+[Oo]bj/
+
+# ===================================================================
+# Frontend (Node.js / React)
+# ===================================================================
+# Node.js dependencies
+node_modules/
+
+# Build outputs
+build/
+dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Other
+.npm
+
+GEMINI.md
