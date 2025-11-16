@@ -5,10 +5,13 @@ using Npgsql;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using CodeFamily.API.Workers;
+using CodeFamily.Data.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // === 1. Add services to the container ===
+// Register our background worker
 
 // Get the connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -23,6 +26,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
+
 .AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -39,6 +43,10 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
+builder.Services.AddHostedService<RepositoryIngestionWorker>();
+// Register our custom application services
+builder.Services.AddScoped<IRepositoryIngestionService, RepositoryIngestionService>();
+
 
 // Map C# enums to PostgreSQL enums
 NpgsqlConnection.GlobalTypeMapper.MapEnum<RepoStatus>();
