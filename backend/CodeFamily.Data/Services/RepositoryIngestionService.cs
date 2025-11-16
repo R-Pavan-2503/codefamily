@@ -4,20 +4,24 @@ using Microsoft.Extensions.Logging;
 using LibGit2Sharp;
 using System.IO;
 using Microsoft.EntityFrameworkCore;
+using CodeFamily.Core.Services;
 
 namespace CodeFamily.Data.Services
 {
     public class RepositoryIngestionService : IRepositoryIngestionService
     {
+        private readonly IOwnershipService _ownershipService;
         private readonly CodeFamilyDbContext _context;
         private readonly ILogger<RepositoryIngestionService> _logger;
 
         public RepositoryIngestionService(
             CodeFamilyDbContext context,
-            ILogger<RepositoryIngestionService> logger)
+            ILogger<RepositoryIngestionService> logger,
+            IOwnershipService ownershipService)
         {
             _context = context;
             _logger = logger;
+            _ownershipService = ownershipService;
         }
 
         public async Task ProcessRepositoryAsync(CodeFamily.Core.Entities.Repository repository, CancellationToken stoppingToken)
@@ -143,6 +147,10 @@ namespace CodeFamily.Data.Services
                     _logger.LogInformation("[{RepoName}] Processed {Count} total commits. Saving final changes...", repository.Name, commitCount);
                     await _context.SaveChangesAsync(stoppingToken);
                 }
+
+                _logger.LogInformation("[{RepoName}] Starting ownership calculation...", repository.Name);
+                await _ownershipService.CalculateOwnershipAsync(repository.Id, stoppingToken);
+                _logger.LogInformation("[{RepoName}] Ownership calculation complete.", repository.Name);
 
                 _logger.LogInformation("[{RepoName}] Processing complete.", repository.Name);
             }

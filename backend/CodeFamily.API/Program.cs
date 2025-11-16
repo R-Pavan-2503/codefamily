@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using CodeFamily.API.Workers;
 using CodeFamily.Data.Services;
+using CodeFamily.Core.Services;   // <-- Add this
 
 var builder = WebApplication.CreateBuilder(args);
 
